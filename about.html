@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>关于 · JIE 的技术博客</title>
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>
+    /* 轻溶解：若从站内跳转而来，首帧即置透明，避免闪烁（app.js 就绪后淡入） */
+    (function () {
+      try {
+        if (sessionStorage.getItem('jie-dissolve') === '1') {
+          sessionStorage.removeItem('jie-dissolve');
+          document.documentElement.classList.add('pre-dissolve');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <!--BUILD:seo-->  <meta name="description" content="JIE 是谁，为什么记录 AI 应用学习过程。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/about.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="关于我 · JIE 的技术博客" />
+  <meta property="og:description" content="JIE 是谁，为什么记录 AI 应用学习过程。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/about.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" /><!--/BUILD:seo-->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="about">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><!--BUILD:header--><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html" aria-current="page">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html" aria-current="page">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header><!--/BUILD:header--></div>
+  <main id="main">
+    <section class="page-head">
+      <div class="container">
+        <p class="label-mono accent">// ABOUT ME</p>
+        <h1>关于我</h1>
+        <p id="about-lede"></p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container about-block">
+        <p>这里是我记录学习 AI 应用过程的地方。写博客对我来说有两个意义：把一次性踩坑变成可复用的经验，以及用写作逼自己把模糊的概念想清楚。</p>
+        <h2>我正在学什么</h2>
+        <ul>
+          <li>大模型 API 调用与工程化实践</li>
+          <li>Prompt Engineering：把意图结构化表达</li>
+          <li>RAG 检索增强，让模型用上私有知识</li>
+          <li>Agent 与工具调用，让 AI 自己动手</li>
+        </ul>
+        <h2>我的学习方式</h2>
+        <p>边做边学，每学一个概念就动手写一个最小可运行的东西，再把过程写成笔记。这个博客本身就是这条路的副产品。</p>
+        <h2>关于这个博客</h2>
+        <p>纯静态、零依赖、双击即可打开。双主题，所有内容集中在一个配置文件里。更多实现细节可以读《第一次调用大模型 API》和《从 Prompt 到 Prompt Engineering》那两篇文章。</p>
+        <h2>联系我</h2>
+        <p>欢迎通过 <a class="accent" id="about-github" href="https://github.com/" target="_blank" rel="noopener">GitHub</a> 找到我，一起交流 AI 应用的学习心得。</p>
+      </div>
+    </section>
+  </main>
+  <div id="site-footer"><!--BUILD:footer--><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer><!--/BUILD:footer--></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/page.js"></script>
+  <script>
+    window.Page.setTitle('关于我');
+    document.getElementById('about-lede').textContent = '你好，我是「' + window.SITE.name + '」，正在系统学习 AI 应用，把每一步都记成笔记。';
+    document.getElementById('about-github').href = window.SITE.github;
+  </script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

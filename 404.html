@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>404 · JIE 的技术博客</title>
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>
+    /* 轻溶解：若从站内跳转而来，首帧即置透明，避免闪烁（app.js 就绪后淡入） */
+    (function () {
+      try {
+        if (sessionStorage.getItem('jie-dissolve') === '1') {
+          sessionStorage.removeItem('jie-dissolve');
+          document.documentElement.classList.add('pre-dissolve');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <!--BUILD:seo-->  <meta name="description" content="页面不存在。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/404.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="404 · JIE 的技术博客" />
+  <meta property="og:description" content="页面不存在。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/404.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" /><!--/BUILD:seo-->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="404">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><!--BUILD:header--><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header><!--/BUILD:header--></div>
+  <main id="main">
+    <section class="page-head">
+      <div class="container">
+        <p class="label-mono accent">// 404 — PAGE NOT FOUND</p>
+        <h1>这个页面走丢了</h1>
+        <p>链接可能已经失效。不如回到首页重新开始。</p>
+        <div class="actions" style="margin-top:28px;display:flex;gap:12px">
+          <a class="btn btn-primary" href="index.html">回到首页 →</a>
+          <a class="btn btn-ghost" href="blog.html">看看文章</a>
+        </div>
+      </div>
+    </section>
+  </main>
+  <div id="site-footer"><!--BUILD:footer--><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer><!--/BUILD:footer--></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>你好，AI：我为什么开始系统学习 AI 应用 · JIE 的技术博客</title>
+  <meta name="description" content="从「会用 ChatGPT」到「能做出一个 AI 应用」，中间隔着一条叫工程化的河。记录我为什么出发，以及打算怎么走。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/posts/why-i-learn-ai.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="你好，AI：我为什么开始系统学习 AI 应用 · JIE 的技术博客" />
+  <meta property="og:description" content="从「会用 ChatGPT」到「能做出一个 AI 应用」，中间隔着一条叫工程化的河。记录我为什么出发，以及打算怎么走。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/posts/why-i-learn-ai.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>(function(){try{if(sessionStorage.getItem("jie-dissolve")==="1"){sessionStorage.removeItem("jie-dissolve");document.documentElement.classList.add("pre-dissolve")}}catch(e){}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="post">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header></div>
+  <main id="main"><div class="article-shell"><article class="article"><p class="label-mono accent">// 随笔</p><h1>你好，AI：我为什么开始系统学习 AI 应用</h1><div class="article-meta"><time datetime="2026-11-16">2026年11月16日</time><span>·</span><span>约 4 分钟</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">#学习笔记</a></div><details class="toc-inline"><summary>本文目录</summary><ul class="toc-list"><li><a href="posts/why-i-learn-ai.html#sec-0" data-toc="sec-0">我不想再当「提示词收藏家」</a></li><li><a href="posts/why-i-learn-ai.html#sec-1" data-toc="sec-1">一个月后的进度</a></li></ul></details><div class="article-body">
+        <p>转折点发生在一个很具体的下午。我想给自己常用的笔记工具加个「自动总结」按钮，打开文档一看——调用一个模型、传一段文本、拿回结果，好像只要十几行代码。结果我被 <code>401</code>、<code>429</code>、token 计费、上下文截断轮番教做人，一个「简单」的按钮折腾了三个晚上才跑通。</p>
+        <p>那一刻我意识到：从「会用聊天框」到「能做出 AI 应用」，中间隔着一整个工程世界。这个博客就是这个认知下的产物。</p>
+        <h2 id="sec-0" tabindex="-1">我不想再当「提示词收藏家」</h2>
+        <p>我的收藏夹里曾经躺着 200 多条「神级 prompt」。真到用的时候，一条都调不出来——因为我根本不知道它为什么有效，更不知道换个场景该怎么改。收藏不等于掌握，这是我踩的第一个坑。</p>
+        <p>所以我给自己定的规矩是：<strong>每学一个概念，必须动手做出一个能跑的东西</strong>。跑通 API、调稳 Prompt、接上知识库、让模型自己调用工具——每一步都留下可复现的代码和踩坑记录。</p>
+        <h2 id="sec-1" tabindex="-1">一个月后的进度</h2>
+        <p>从 11 月 2 日到今天，我写了 6 篇笔记、做了 4 个小项目，烧掉了大概 30 万 token（其中至少三分之一浪费在调格式和重复请求上）。数字不大，但每个坑都是自己踩出来的，不是看别人的复盘「云体验」。</p>
+        <p>如果你也在学 AI 应用，希望这些笔记能帮你少走一点弯路——尤其是那些我花了一整晚才定位、说出来却只要一句话的坑。</p>
+      </div><nav class="article-nav"><a class="post-nav-item" href="temperature-and-sampling.html"><span>← 更新一篇</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a><a class="post-nav-item" href="structured-output-json.html"><span>更旧一篇 →</span><strong>让模型稳定输出 JSON，我踩了格式解析的四个坑</strong></a></nav><div class="article-nav"><a class="back-link" href="../blog.html">← 返回全部文章</a></div><section class="related-posts"><h2> related / 相关阅读</h2><div class="related-grid"><a href="semantic-cache-cost.html"><span>2026年11月18日</span><strong>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</strong></a><a href="vision-api-screenshots.html"><span>2026年11月18日</span><strong>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</strong></a><a href="temperature-and-sampling.html"><span>2026年11月17日</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a></div></section></article><aside class="toc toc-side" id="toc-side" aria-label="文章目录"><p class="toc-title">目录 / CONTENTS</p><ul class="toc-list"><li><a href="posts/why-i-learn-ai.html#sec-0" data-toc="sec-0">我不想再当「提示词收藏家」</a></li><li><a href="posts/why-i-learn-ai.html#sec-1" data-toc="sec-1">一个月后的进度</a></li></ul></aside></div></main>
+  <div id="site-footer"><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

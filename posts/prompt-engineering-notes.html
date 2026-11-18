@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>从 Prompt 到 Prompt Engineering：我踩过的几个坑 · JIE 的技术博客</title>
+  <meta name="description" content="「请帮我写一下」和「你是一位资深编辑，请把下面文字改写得简洁」——差别不只是礼貌，而是可复用的工程方法。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/posts/prompt-engineering-notes.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="从 Prompt 到 Prompt Engineering：我踩过的几个坑 · JIE 的技术博客" />
+  <meta property="og:description" content="「请帮我写一下」和「你是一位资深编辑，请把下面文字改写得简洁」——差别不只是礼貌，而是可复用的工程方法。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/posts/prompt-engineering-notes.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>(function(){try{if(sessionStorage.getItem("jie-dissolve")==="1"){sessionStorage.removeItem("jie-dissolve");document.documentElement.classList.add("pre-dissolve")}}catch(e){}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="post">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header></div>
+  <main id="main"><div class="article-shell"><article class="article"><p class="label-mono accent">// 技术分享</p><h1>从 Prompt 到 Prompt Engineering：我踩过的几个坑</h1><div class="article-meta"><time datetime="2026-11-11">2026年11月11日</time><span>·</span><span>约 7 分钟</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=Prompt">#Prompt</a><a class="tag" href="tags.html?tag=%E5%AE%9E%E8%B7%B5">#实践</a></div><details class="toc-inline"><summary>本文目录</summary><ul class="toc-list"><li><a href="posts/prompt-engineering-notes.html#sec-0" data-toc="sec-0">第 1 版：「帮我总结反馈」</a></li><li><a href="posts/prompt-engineering-notes.html#sec-1" data-toc="sec-1">第 2~4 版：把要求一条条加上去</a></li><li><a href="posts/prompt-engineering-notes.html#sec-2" data-toc="sec-2">第 5 版：两三个示例抵十句描述</a></li><li><a href="posts/prompt-engineering-notes.html#sec-3" data-toc="sec-3">第 7 版：像管代码一样管 prompt</a></li><li><a href="posts/prompt-engineering-notes.html#sec-4" data-toc="sec-4">结论</a></li></ul></details><div class="article-body">
+        <p>我做过一个很无聊但很有用的实验：让模型把用户反馈提炼成结构化标签。同一个任务，我从第 1 版改到第 7 版，把每一版的输出都存了下来。回头看，这就是一部浓缩的 Prompt Engineering 进化史。</p>
+        <h2 id="sec-0" tabindex="-1">第 1 版：「帮我总结反馈」</h2>
+        <p>输出随缘：有时是一段话，有时是要点列表，有时自作主张加一堆建议。问题不在模型，在于我什么都没约束——「总结」这两个字，人和模型的理解差着十万八千里。</p>
+        <h2 id="sec-1" tabindex="-1">第 2~4 版：把要求一条条加上去</h2>
+        <p>加了角色（「你是一位产品经理」）、加了输出格式（「只返回 JSON」）、加了字段说明。每一版都解决一个具体问题，稳定度肉眼可见地上升。但 JSON 还是会偶尔带 markdown 代码块包裹——模型「好心」地帮我格式化了。</p>
+        <h2 id="sec-2" tabindex="-1">第 5 版：两三个示例抵十句描述</h2>
+        <p>与其反复强调「语气要客观」，不如直接塞两条输入→输出的样例。Few-shot 一上，风格漂移基本消失。这是所有版本里性价比最高的一次改动。</p>
+        <h2 id="sec-3" tabindex="-1">第 7 版：像管代码一样管 prompt</h2>
+        <p>最后我给这个 prompt 建了个小文件，带编号、变更记录和测试用例：</p>
+        <pre><code># V7 · 反馈标签提取
+# 变更：V6 加了 few-shot；V7 收紧 JSON 输出
+角色：你是产品经理，只做分类，不给建议。
+输入：&lt;用户反馈原文&gt;
+输出：纯 JSON，不要 markdown 代码块，字段：
+  {"tags": ["标签"], "sentiment": "pos|neg|neutral"}
+示例：
+  输入「太卡了」，输出 {"tags":["性能"],"sentiment":"neg"}</code></pre>
+        <p>改崩了能一键退回上一版，这比任何「技巧」都重要。</p>
+        <h2 id="sec-4" tabindex="-1">结论</h2>
+        <p>Prompt Engineering 不是玄学，是把意图结构化表达、并像代码一样迭代管理的工程能力。七个版本里没有一个「神级技巧」，全是把模糊变具体的笨功夫。</p>
+      </div><nav class="article-nav"><a class="post-nav-item" href="embedding-model-choice.html"><span>← 更新一篇</span><strong>Embedding 模型选型：我被「维度越高越好」骗了</strong></a><a class="post-nav-item" href="streaming-output.html"><span>更旧一篇 →</span><strong>流式输出：从「等待 8 秒」到「逐字出现」</strong></a></nav><div class="article-nav"><a class="back-link" href="../blog.html">← 返回全部文章</a></div><section class="related-posts"><h2> related / 相关阅读</h2><div class="related-grid"><a href="semantic-cache-cost.html"><span>2026年11月18日</span><strong>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</strong></a><a href="vision-api-screenshots.html"><span>2026年11月18日</span><strong>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</strong></a><a href="temperature-and-sampling.html"><span>2026年11月17日</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a></div></section></article><aside class="toc toc-side" id="toc-side" aria-label="文章目录"><p class="toc-title">目录 / CONTENTS</p><ul class="toc-list"><li><a href="posts/prompt-engineering-notes.html#sec-0" data-toc="sec-0">第 1 版：「帮我总结反馈」</a></li><li><a href="posts/prompt-engineering-notes.html#sec-1" data-toc="sec-1">第 2~4 版：把要求一条条加上去</a></li><li><a href="posts/prompt-engineering-notes.html#sec-2" data-toc="sec-2">第 5 版：两三个示例抵十句描述</a></li><li><a href="posts/prompt-engineering-notes.html#sec-3" data-toc="sec-3">第 7 版：像管代码一样管 prompt</a></li><li><a href="posts/prompt-engineering-notes.html#sec-4" data-toc="sec-4">结论</a></li></ul></aside></div></main>
+  <div id="site-footer"><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

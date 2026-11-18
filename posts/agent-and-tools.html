@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>Agent 是什么？从「工具调用」说起 · JIE 的技术博客</title>
+  <meta name="description" content="让模型自己决定调用哪个函数、传什么参数——Tool Calling 是理解 Agent 的钥匙。用一个查天气的小例子讲清楚。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/posts/agent-and-tools.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="Agent 是什么？从「工具调用」说起 · JIE 的技术博客" />
+  <meta property="og:description" content="让模型自己决定调用哪个函数、传什么参数——Tool Calling 是理解 Agent 的钥匙。用一个查天气的小例子讲清楚。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/posts/agent-and-tools.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>(function(){try{if(sessionStorage.getItem("jie-dissolve")==="1"){sessionStorage.removeItem("jie-dissolve");document.documentElement.classList.add("pre-dissolve")}}catch(e){}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="post">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header></div>
+  <main id="main"><div class="article-shell"><article class="article"><p class="label-mono accent">// 技术分享</p><h1>Agent 是什么？从「工具调用」说起</h1><div class="article-meta"><time datetime="2026-11-05">2026年11月5日</time><span>·</span><span>约 10 分钟</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=Agent">#Agent</a><a class="tag" href="tags.html?tag=%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">#学习笔记</a></div><details class="toc-inline"><summary>本文目录</summary><ul class="toc-list"><li><a href="posts/agent-and-tools.html#sec-0" data-toc="sec-0">一个最小的例子</a></li><li><a href="posts/agent-and-tools.html#sec-1" data-toc="sec-1">我的第一个死循环</a></li><li><a href="posts/agent-and-tools.html#sec-2" data-toc="sec-2">可靠性靠工程，不靠自觉</a></li><li><a href="posts/agent-and-tools.html#sec-3" data-toc="sec-3">它和工作流有什么区别</a></li></ul></details><div class="article-body">
+        <p>理解 Agent，最好的起点是 Tool Calling（工具调用）。普通对话里模型只能说话；有了工具调用，它可以「决定」去执行一个函数。我用一个查天气的小例子入门，结果第一次就写出了一个死循环，把额度烧掉了一截。</p>
+        <h2 id="sec-0" tabindex="-1">一个最小的例子</h2>
+        <p>把查天气函数 <code>get_weather(city)</code> 的定义交给模型。用户问「今天北京热不热」，模型不再瞎编，而是返回结构化请求：函数名 + 参数 <code>{"city": "北京"}</code>。程序真正执行函数，把结果发回去，模型再生成自然语言回答。</p>
+        <p>关键在于：<strong>模型只负责「决定调什么」，真正执行的是你的代码</strong>。这一点想通了，Agent 就没那么神秘了。</p>
+        <h2 id="sec-1" tabindex="-1">我的第一个死循环</h2>
+        <p>我把「调用工具 → 拿结果 → 再问模型」写成了 <code>while True</code>。有一次工具返回了错误格式，模型看不懂，又调了一次，还是错误……程序就这么转了 40 多步，每步都在烧 token。等我回过神来，那天的免费额度已经见底。</p>
+        <pre><code>MAX_STEPS = 6  # 硬性上限，绝不能省
+for step in range(MAX_STEPS):
+    resp = llm.step(messages)
+    if resp.tool_call is None:
+        return resp.text          # 模型认为任务完成
+    result = validate_and_run(resp.tool_call)  # 先校验参数
+    messages.append(tool_result(result))</code></pre>
+        <h2 id="sec-2" tabindex="-1">可靠性靠工程，不靠自觉</h2>
+        <p>从那以后，我给每个 Agent 循环都上了三道保险：<strong>最大步数</strong>（防死循环）、<strong>参数校验</strong>（模型可能传错类型、漏必填项）、<strong>单步超时</strong>（工具卡住不能拖死整个流程）。模型会调错工具、会传错参数，这些都不是 bug，是常态。</p>
+        <h2 id="sec-3" tabindex="-1">它和工作流有什么区别</h2>
+        <p>工作流的路径是人写死的：A 之后一定 B。Agent 的路径是模型动态决定的：它可能先查天气再查交通，也可能判断不需要查。自由度更高，代价就是不确定性更大——所以才需要上面那些工程约束兜底。</p>
+      </div><nav class="article-nav"><a class="post-nav-item" href="prompt-injection.html"><span>← 更新一篇</span><strong>我的 AI 助手被「越狱」了：Prompt 注入入门</strong></a><a class="post-nav-item" href="reading-assistant.html"><span>更旧一篇 →</span><strong>我用 AI 做了个读书笔记助手</strong></a></nav><div class="article-nav"><a class="back-link" href="../blog.html">← 返回全部文章</a></div><section class="related-posts"><h2> related / 相关阅读</h2><div class="related-grid"><a href="semantic-cache-cost.html"><span>2026年11月18日</span><strong>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</strong></a><a href="vision-api-screenshots.html"><span>2026年11月18日</span><strong>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</strong></a><a href="temperature-and-sampling.html"><span>2026年11月17日</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a></div></section></article><aside class="toc toc-side" id="toc-side" aria-label="文章目录"><p class="toc-title">目录 / CONTENTS</p><ul class="toc-list"><li><a href="posts/agent-and-tools.html#sec-0" data-toc="sec-0">一个最小的例子</a></li><li><a href="posts/agent-and-tools.html#sec-1" data-toc="sec-1">我的第一个死循环</a></li><li><a href="posts/agent-and-tools.html#sec-2" data-toc="sec-2">可靠性靠工程，不靠自觉</a></li><li><a href="posts/agent-and-tools.html#sec-3" data-toc="sec-3">它和工作流有什么区别</a></li></ul></aside></div></main>
+  <div id="site-footer"><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

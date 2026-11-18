@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用 · JIE 的技术博客</title>
+  <meta name="description" content="以为多模态就是「传张图片问一句」，结果先撞 413 请求体过大，再遇上模型把错误码 NO 读成 N0。截图理解的关键不在模型，在送进去之前怎么处理图。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/posts/vision-api-screenshots.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用 · JIE 的技术博客" />
+  <meta property="og:description" content="以为多模态就是「传张图片问一句」，结果先撞 413 请求体过大，再遇上模型把错误码 NO 读成 N0。截图理解的关键不在模型，在送进去之前怎么处理图。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/posts/vision-api-screenshots.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>(function(){try{if(sessionStorage.getItem("jie-dissolve")==="1"){sessionStorage.removeItem("jie-dissolve");document.documentElement.classList.add("pre-dissolve")}}catch(e){}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="post">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header></div>
+  <main id="main"><div class="article-shell"><article class="article"><p class="label-mono accent">// 技术分享</p><h1>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</h1><div class="article-meta"><time datetime="2026-11-18">2026年11月18日</time><span>·</span><span>约 10 分钟</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=%E5%A4%9A%E6%A8%A1%E6%80%81">#多模态</a><a class="tag" href="tags.html?tag=%E5%AE%9E%E8%B7%B5">#实践</a></div><details class="toc-inline"><summary>本文目录</summary><ul class="toc-list"><li><a href="posts/vision-api-screenshots.html#sec-0" data-toc="sec-0">第一个坑：413 请求体过大</a></li><li><a href="posts/vision-api-screenshots.html#sec-1" data-toc="sec-1">第二个坑：detail=low 省 token，但看不清小字</a></li><li><a href="posts/vision-api-screenshots.html#sec-2" data-toc="sec-2">真正有效的办法：先裁剪再放大</a></li><li><a href="posts/vision-api-screenshots.html#sec-3" data-toc="sec-3">一个意外收获：让模型输出结构化结果</a></li><li><a href="posts/vision-api-screenshots.html#sec-4" data-toc="sec-4">结论</a></li></ul></details><div class="article-body">
+        <p>我在 NPI 系统里排查问题，经常要对着同事发来的报错截图眯着眼找错误码——字小、压缩糊、还要来回放大。于是我想做个小工具：把截图丢给视觉模型，直接让它读出错误码并解释原因。听起来是「传张图 + 问一句」的十分钟活，实际调了两天。</p>
+        <h2 id="sec-0" tabindex="-1">第一个坑：413 请求体过大</h2>
+        <p>我直接把一张 1920x1080 的截图读成 base64 塞进请求，第一次调用就返回 <code>413 Request Entity Too Large</code>——原图 4.8MB，base64 编码后膨胀约 33%，超过网关 6MB 的限制。先做有损压缩并限制长边到 1568 像素，体积降到 340KB，请求才通。</p>
+        <pre><code>from PIL import Image
+import io, base64
+
+img = Image.open(path).convert("RGB")
+img.thumbnail((1568, 1568))          # 长边限制
+buf = io.BytesIO()
+img.save(buf, format="JPEG", quality=82, optimize=True)
+b64 = base64.b64encode(buf.getvalue()).decode()
+# data URL: "data:image/jpeg;base64," + b64</code></pre>
+        <h2 id="sec-1" tabindex="-1">第二个坑：detail=low 省 token，但看不清小字</h2>
+        <p>视觉 API 的 <code>detail</code> 参数直接影响计费：<code>low</code> 固定约 85 tokens，<code>high</code> 按图块算，1568x1080 的图约 1105 tokens。我为了省钱全用 <code>low</code>，结果模型把错误码 <code>NO_2026</code> 读成了 <code>N0_2026</code>——字母 O 和数字 0 在压缩后的小字里糊成一团。这个错误很致命：按错误码去查文档，查到的完全是另一条。</p>
+        <h2 id="sec-2" tabindex="-1">真正有效的办法：先裁剪再放大</h2>
+        <p>我把策略改成两步：先用 <code>high</code> 让模型定位报错区域的大致坐标，再用 PIL 把那块区域裁出来、放大 3 倍、单独送一次。第二次调用只处理局部，token 反而比整图 <code>high</code> 少，错误码识别准确率从 71% 提到 96%。<strong>把「看清」这件事交给预处理，而不是指望模型更强。</strong></p>
+        <h2 id="sec-3" tabindex="-1">一个意外收获：让模型输出结构化结果</h2>
+        <p>最初我让它「告诉我错误码和原因」，输出总是一段话，程序没法用。改成要求返回 JSON：<code>{"code": "...", "reason": "...", "confidence": 0.9}</code>，并给 <code>confidence</code> 设阈值——低于 0.75 就不自动填单，转人工。这样既自动处理了大部分常见报错，又不至于因为一次误读把工单写错。</p>
+        <h2 id="sec-4" tabindex="-1">结论</h2>
+        <p>多模态调用的难点不在 API 本身，而在「送进去之前」：尺寸、压缩、区域裁剪、计费模式，每一步都影响结果。我现在的默认配置是：长边 1568、JPEG quality 82、先 <code>high</code> 定位再局部放大、输出带置信度的结构化结果。两天踩坑换来的这几行配置，比换更强的模型管用得多。</p>
+      </div><nav class="article-nav"><a class="post-nav-item" href="semantic-cache-cost.html"><span>← 更新一篇</span><strong>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</strong></a><a class="post-nav-item" href="temperature-and-sampling.html"><span>更旧一篇 →</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a></nav><div class="article-nav"><a class="back-link" href="../blog.html">← 返回全部文章</a></div><section class="related-posts"><h2> related / 相关阅读</h2><div class="related-grid"><a href="semantic-cache-cost.html"><span>2026年11月18日</span><strong>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</strong></a><a href="temperature-and-sampling.html"><span>2026年11月17日</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a><a href="why-i-learn-ai.html"><span>2026年11月16日</span><strong>你好，AI：我为什么开始系统学习 AI 应用</strong></a></div></section></article><aside class="toc toc-side" id="toc-side" aria-label="文章目录"><p class="toc-title">目录 / CONTENTS</p><ul class="toc-list"><li><a href="posts/vision-api-screenshots.html#sec-0" data-toc="sec-0">第一个坑：413 请求体过大</a></li><li><a href="posts/vision-api-screenshots.html#sec-1" data-toc="sec-1">第二个坑：detail=low 省 token，但看不清小字</a></li><li><a href="posts/vision-api-screenshots.html#sec-2" data-toc="sec-2">真正有效的办法：先裁剪再放大</a></li><li><a href="posts/vision-api-screenshots.html#sec-3" data-toc="sec-3">一个意外收获：让模型输出结构化结果</a></li><li><a href="posts/vision-api-screenshots.html#sec-4" data-toc="sec-4">结论</a></li></ul></aside></div></main>
+  <div id="site-footer"><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

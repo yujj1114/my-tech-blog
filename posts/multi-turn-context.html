@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>多轮对话聊久了就「失忆」，我做了个上下文管理器 · JIE 的技术博客</title>
+  <meta name="description" content="对话超过十几轮，模型开始忘掉前面的设定、重复问过的问题。这不是模型的锅，是上下文窗口管理没做好。记录我的三层解决方案。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/posts/multi-turn-context.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="多轮对话聊久了就「失忆」，我做了个上下文管理器 · JIE 的技术博客" />
+  <meta property="og:description" content="对话超过十几轮，模型开始忘掉前面的设定、重复问过的问题。这不是模型的锅，是上下文窗口管理没做好。记录我的三层解决方案。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/posts/multi-turn-context.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>(function(){try{if(sessionStorage.getItem("jie-dissolve")==="1"){sessionStorage.removeItem("jie-dissolve");document.documentElement.classList.add("pre-dissolve")}}catch(e){}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="post">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header></div>
+  <main id="main"><div class="article-shell"><article class="article"><p class="label-mono accent">// 学习笔记</p><h1>多轮对话聊久了就「失忆」，我做了个上下文管理器</h1><div class="article-meta"><time datetime="2026-11-09">2026年11月9日</time><span>·</span><span>约 11 分钟</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=Prompt">#Prompt</a><a class="tag" href="tags.html?tag=%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">#学习笔记</a></div><details class="toc-inline"><summary>本文目录</summary><ul class="toc-list"><li><a href="posts/multi-turn-context.html#sec-0" data-toc="sec-0">问题一：窗口溢出</a></li><li><a href="posts/multi-turn-context.html#sec-1" data-toc="sec-1">三层方案</a></li><li><a href="posts/multi-turn-context.html#sec-2" data-toc="sec-2">什么时候该开新会话</a></li></ul></details><div class="article-body">
+        <p>我的读书助手支持追问，但聊到二十轮左右就开始「失忆」：忘了最初的角色设定，把刚回答过的问题又问一遍。一开始我以为是模型不行，其实是上下文管理太粗糙——我把所有历史消息无脑塞进每次请求。</p>
+        <h2 id="sec-0" tabindex="-1">问题一：窗口溢出</h2>
+        <p>历史越来越长，总有一刻超过上下文窗口，直接报错。我的第一版解法是「只保留最近 N 轮」，简单粗暴，但被丢掉的早期信息里往往有关键设定。</p>
+        <h2 id="sec-1" tabindex="-1">三层方案</h2>
+        <p>最终我做了个上下文管理器，分三层处理：</p>
+        <ul>
+          <li><strong>系统提示固定</strong>：角色设定永远放在最前，绝不参与裁剪</li>
+          <li><strong>滚动摘要</strong>：每超过阈值，就把最早的若干轮压成一段摘要，保留关键信息</li>
+          <li><strong>最近原文</strong>：最后几轮保留完整原文，保证对话连贯</li>
+        </ul>
+        <pre><code>messages = [system_prompt]                 # 恒定
+messages += [summary_of_old_turns]         # 压缩的历史
+messages += recent_turns[-6:]              # 完整近期
+messages += [new_user_input]</code></pre>
+        <h2 id="sec-2" tabindex="-1">什么时候该开新会话</h2>
+        <p>还有个反直觉的经验：不是所有对话都该一直续下去。当用户切换了主题（从「总结第一章」跳到「帮我写代码」），与其在旧上下文里越滚越乱，不如主动开新会话。判断主题切换本身也是个值得做的工程点。</p>
+      </div><nav class="article-nav"><a class="post-nav-item" href="streaming-output.html"><span>← 更新一篇</span><strong>流式输出：从「等待 8 秒」到「逐字出现」</strong></a><a class="post-nav-item" href="rag-first-try.html"><span>更旧一篇 →</span><strong>RAG 入门：给大模型接上自己的知识库</strong></a></nav><div class="article-nav"><a class="back-link" href="../blog.html">← 返回全部文章</a></div><section class="related-posts"><h2> related / 相关阅读</h2><div class="related-grid"><a href="semantic-cache-cost.html"><span>2026年11月18日</span><strong>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</strong></a><a href="vision-api-screenshots.html"><span>2026年11月18日</span><strong>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</strong></a><a href="temperature-and-sampling.html"><span>2026年11月17日</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a></div></section></article><aside class="toc toc-side" id="toc-side" aria-label="文章目录"><p class="toc-title">目录 / CONTENTS</p><ul class="toc-list"><li><a href="posts/multi-turn-context.html#sec-0" data-toc="sec-0">问题一：窗口溢出</a></li><li><a href="posts/multi-turn-context.html#sec-1" data-toc="sec-1">三层方案</a></li><li><a href="posts/multi-turn-context.html#sec-2" data-toc="sec-2">什么时候该开新会话</a></li></ul></aside></div></main>
+  <div id="site-footer"><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

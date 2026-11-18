@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>第一次调用大模型 API：一个 Hello World 的完整记录 · JIE 的技术博客</title>
+  <meta name="description" content="申请 key、装 SDK、发第一条请求、看懂返回结构。把第一次调 API 的每一步和踩过的坑都记下来。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/posts/first-llm-api.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="第一次调用大模型 API：一个 Hello World 的完整记录 · JIE 的技术博客" />
+  <meta property="og:description" content="申请 key、装 SDK、发第一条请求、看懂返回结构。把第一次调 API 的每一步和踩过的坑都记下来。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/posts/first-llm-api.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>(function(){try{if(sessionStorage.getItem("jie-dissolve")==="1"){sessionStorage.removeItem("jie-dissolve");document.documentElement.classList.add("pre-dissolve")}}catch(e){}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="post">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header></div>
+  <main id="main"><div class="article-shell"><article class="article"><p class="label-mono accent">// 技术分享</p><h1>第一次调用大模型 API：一个 Hello World 的完整记录</h1><div class="article-meta"><time datetime="2026-11-14">2026年11月14日</time><span>·</span><span>约 9 分钟</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=API">#API</a><a class="tag" href="tags.html?tag=%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">#学习笔记</a></div><details class="toc-inline"><summary>本文目录</summary><ul class="toc-list"><li><a href="posts/first-llm-api.html#sec-0" data-toc="sec-0">先说最惊险的一个坑：Key 差点泄露</a></li><li><a href="posts/first-llm-api.html#sec-1" data-toc="sec-1">三个让我卡住的错误</a></li><li><a href="posts/first-llm-api.html#sec-2" data-toc="sec-2">看懂返回结构，才知道花了多少钱</a></li></ul></details><div class="article-body">
+        <p>第一次调用大模型 API，代码本身只有十几行，真正花时间的是代码之外的东西。这篇把那三个晚上踩的坑完整记一遍。</p>
+        <h2 id="sec-0" tabindex="-1">先说最惊险的一个坑：Key 差点泄露</h2>
+        <p>我图省事，把 key 直接写在了脚本第一行，跑通后顺手 <code>git add .</code>。提交前最后一秒瞥了一眼 diff，冷汗都下来了。<strong>key 永远不要写进代码，更不要进仓库</strong>——哪怕只是本地练习。改成环境变量读取，是底线：</p>
+        <pre><code>import os
+from openai import OpenAI
+
+client = OpenAI(api_key=os.environ["OPENAI_API_KEY"])
+resp = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[{"role": "user", "content": "你好"}],
+    timeout=20
+)
+print(resp.choices[0].message.content)</code></pre>
+        <p>后来我才知道，Github 上有自动扫描泄露 key 的机器人，裸奔的 key 平均几十分钟就会被扫走刷爆。幸好那次没提交。</p>
+        <h2 id="sec-1" tabindex="-1">三个让我卡住的错误</h2>
+        <p><code>401</code>：key 写错了，或者忘了换环境变量——我那次是多复制了一个空格。<code>429</code>：请求太快触发限流，批量跑的时候一连串报错，得加指数退避重试。<code>context length exceeded</code>：一次性塞太多内容，被上下文窗口挡回来。</p>
+        <p>还有一个更隐蔽的：<code>messages</code> 里系统指令该用 <code>system</code> role，我写成了 <code>user</code>，结果模型偶尔「忘了人设」，输出飘忽不定。排查了半小时才发现是这一行。</p>
+        <h2 id="sec-2" tabindex="-1">看懂返回结构，才知道花了多少钱</h2>
+        <p>跑通之后我打印了完整的 <code>resp.usage</code>：prompt_tokens、completion_tokens、total_tokens 三个数字。那一瞬间才把「聊天」和「计费」对上号——原来每一次对话都是按 token 真金白银算的。养成看 usage 的习惯很重要，后来优化成本全靠它。</p>
+        <p>Hello World 只是起点。把 key 管好、把错误码认全、把 token 盯住，起点才算走稳。</p>
+      </div><nav class="article-nav"><a class="post-nav-item" href="structured-output-json.html"><span>← 更新一篇</span><strong>让模型稳定输出 JSON，我踩了格式解析的四个坑</strong></a><a class="post-nav-item" href="embedding-model-choice.html"><span>更旧一篇 →</span><strong>Embedding 模型选型：我被「维度越高越好」骗了</strong></a></nav><div class="article-nav"><a class="back-link" href="../blog.html">← 返回全部文章</a></div><section class="related-posts"><h2> related / 相关阅读</h2><div class="related-grid"><a href="semantic-cache-cost.html"><span>2026年11月18日</span><strong>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</strong></a><a href="vision-api-screenshots.html"><span>2026年11月18日</span><strong>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</strong></a><a href="temperature-and-sampling.html"><span>2026年11月17日</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a></div></section></article><aside class="toc toc-side" id="toc-side" aria-label="文章目录"><p class="toc-title">目录 / CONTENTS</p><ul class="toc-list"><li><a href="posts/first-llm-api.html#sec-0" data-toc="sec-0">先说最惊险的一个坑：Key 差点泄露</a></li><li><a href="posts/first-llm-api.html#sec-1" data-toc="sec-1">三个让我卡住的错误</a></li><li><a href="posts/first-llm-api.html#sec-2" data-toc="sec-2">看懂返回结构，才知道花了多少钱</a></li></ul></aside></div></main>
+  <div id="site-footer"><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

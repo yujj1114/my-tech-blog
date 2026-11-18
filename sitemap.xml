@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>https://yujj1114.github.io/my-tech-blog/index.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/blog.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/projects.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/tags.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/archive.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/about.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/semantic-cache-cost.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/vision-api-screenshots.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/temperature-and-sampling.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/why-i-learn-ai.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/structured-output-json.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/first-llm-api.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/embedding-model-choice.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/prompt-engineering-notes.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/streaming-output.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/multi-turn-context.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/rag-first-try.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/prompt-injection.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/agent-and-tools.html</loc></url>
+  <url><loc>https://yujj1114.github.io/my-tech-blog/posts/reading-assistant.html</loc></url>
+</urlset>

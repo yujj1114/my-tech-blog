@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://yujj1114.github.io/my-tech-blog/sitemap.xml

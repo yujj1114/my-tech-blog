@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>Embedding 模型选型：我被「维度越高越好」骗了 · JIE 的技术博客</title>
+  <meta name="description" content="1536 维一定比 768 维强吗？中文场景该选哪个模型？我用同一个知识库对比了三款 Embedding，结论是：选错模型，后面全白搭。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/posts/embedding-model-choice.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="Embedding 模型选型：我被「维度越高越好」骗了 · JIE 的技术博客" />
+  <meta property="og:description" content="1536 维一定比 768 维强吗？中文场景该选哪个模型？我用同一个知识库对比了三款 Embedding，结论是：选错模型，后面全白搭。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/posts/embedding-model-choice.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>(function(){try{if(sessionStorage.getItem("jie-dissolve")==="1"){sessionStorage.removeItem("jie-dissolve");document.documentElement.classList.add("pre-dissolve")}}catch(e){}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="post">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header></div>
+  <main id="main"><div class="article-shell"><article class="article"><p class="label-mono accent">// 技术分享</p><h1>Embedding 模型选型：我被「维度越高越好」骗了</h1><div class="article-meta"><time datetime="2026-11-13">2026年11月13日</time><span>·</span><span>约 10 分钟</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=RAG">#RAG</a><a class="tag" href="tags.html?tag=%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">#学习笔记</a></div><details class="toc-inline"><summary>本文目录</summary><ul class="toc-list"><li><a href="posts/embedding-model-choice.html#sec-0" data-toc="sec-0">先纠正一个误区</a></li><li><a href="posts/embedding-model-choice.html#sec-1" data-toc="sec-1">三款模型的对比</a></li><li><a href="posts/embedding-model-choice.html#sec-2" data-toc="sec-2">换模型的最大代价：全部重新向量化</a></li><li><a href="posts/embedding-model-choice.html#sec-3" data-toc="sec-3">两个容易忽略的细节</a></li></ul></details><div class="article-body">
+        <p>做 RAG 时我把注意力全放在切片和检索策略上，Embedding 模型随手用了默认的。直到检索质量卡在瓶颈，我才回头看这个被忽略的基础组件——发现它才是天花板。</p>
+        <h2 id="sec-0" tabindex="-1">先纠正一个误区</h2>
+        <p>我一度以为维度越高表示能力越强。做了对比才发现，<strong>维度只是向量的长度，不代表语义质量</strong>。一个训练得好的 768 维中文模型，在中文任务上能吊打一个 1536 维的通用模型。关键看训练语料和场景匹配度，不是数字大小。</p>
+        <h2 id="sec-1" tabindex="-1">三款模型的对比</h2>
+        <p>我用同一批 200 条中文问答做测试集，比较命中率@5：</p>
+        <ul>
+          <li>通用英文模型（1536 维）：61% —— 中文语义理解明显偏弱</li>
+          <li>多语言模型（1024 维）：84% —— 中文表现稳定</li>
+          <li>国产中文模型（768 维）：89% —— 中文场景最优，还更便宜</li>
+        </ul>
+        <p>最便宜、维度最低的中文模型赢了。原因是它在中文语料上做过针对性训练——场景匹配比参数规模重要得多。</p>
+        <h2 id="sec-2" tabindex="-1">换模型的最大代价：全部重新向量化</h2>
+        <p>这是我踩的最疼的坑：Embedding 一旦换了，之前存的所有向量全部作废，得重新跑一遍全库。我的 40 篇笔记不多，但真到生产环境几十万文档，重向量化的时间和成本是笔大账。<strong>所以选型要在最开始就想清楚，别像我一样中途换。</strong></p>
+        <h2 id="sec-3" tabindex="-1">两个容易忽略的细节</h2>
+        <p>一是查询和文档必须用同一个模型，否则向量空间不一致，相似度毫无意义。二是距离度量要匹配——用余弦相似度就得对向量做归一化，我漏了这步，召回结果一度乱七八糟。</p>
+      </div><nav class="article-nav"><a class="post-nav-item" href="first-llm-api.html"><span>← 更新一篇</span><strong>第一次调用大模型 API：一个 Hello World 的完整记录</strong></a><a class="post-nav-item" href="prompt-engineering-notes.html"><span>更旧一篇 →</span><strong>从 Prompt 到 Prompt Engineering：我踩过的几个坑</strong></a></nav><div class="article-nav"><a class="back-link" href="../blog.html">← 返回全部文章</a></div><section class="related-posts"><h2> related / 相关阅读</h2><div class="related-grid"><a href="semantic-cache-cost.html"><span>2026年11月18日</span><strong>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</strong></a><a href="vision-api-screenshots.html"><span>2026年11月18日</span><strong>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</strong></a><a href="temperature-and-sampling.html"><span>2026年11月17日</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a></div></section></article><aside class="toc toc-side" id="toc-side" aria-label="文章目录"><p class="toc-title">目录 / CONTENTS</p><ul class="toc-list"><li><a href="posts/embedding-model-choice.html#sec-0" data-toc="sec-0">先纠正一个误区</a></li><li><a href="posts/embedding-model-choice.html#sec-1" data-toc="sec-1">三款模型的对比</a></li><li><a href="posts/embedding-model-choice.html#sec-2" data-toc="sec-2">换模型的最大代价：全部重新向量化</a></li><li><a href="posts/embedding-model-choice.html#sec-3" data-toc="sec-3">两个容易忽略的细节</a></li></ul></aside></div></main>
+  <div id="site-footer"><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

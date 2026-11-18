@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>我用 AI 做了个读书笔记助手 · JIE 的技术博客</title>
+  <meta name="description" content="把学到的 Prompt、API、RAG 串起来，做了一个能读 PDF、自动提炼要点、还能追问的笔记助手。记录设计思路和踩坑。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/posts/reading-assistant.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="我用 AI 做了个读书笔记助手 · JIE 的技术博客" />
+  <meta property="og:description" content="把学到的 Prompt、API、RAG 串起来，做了一个能读 PDF、自动提炼要点、还能追问的笔记助手。记录设计思路和踩坑。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/posts/reading-assistant.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>(function(){try{if(sessionStorage.getItem("jie-dissolve")==="1"){sessionStorage.removeItem("jie-dissolve");document.documentElement.classList.add("pre-dissolve")}}catch(e){}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="post">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header></div>
+  <main id="main"><div class="article-shell"><article class="article"><p class="label-mono accent">// 项目实践</p><h1>我用 AI 做了个读书笔记助手</h1><div class="article-meta"><time datetime="2026-11-02">2026年11月2日</time><span>·</span><span>约 12 分钟</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=Agent">#Agent</a><a class="tag" href="tags.html?tag=%E5%AE%9E%E8%B7%B5">#实践</a></div><details class="toc-inline"><summary>本文目录</summary><ul class="toc-list"><li><a href="posts/reading-assistant.html#sec-0" data-toc="sec-0">三个模块，难点在组合</a></li><li><a href="posts/reading-assistant.html#sec-1" data-toc="sec-1">一次塞整本书，撞上了天花板</a></li><li><a href="posts/reading-assistant.html#sec-2" data-toc="sec-2">最有意思的发现：让模型先提问</a></li><li><a href="posts/reading-assistant.html#sec-3" data-toc="sec-3">成本账与下一步</a></li></ul></details><div class="article-body">
+        <p>学了一个月，我想把 Prompt、API、RAG、Agent 串成一个真正能用的东西：一个读书笔记助手。上传 PDF，自动提炼要点，还能针对内容追问。这是这轮学习里最完整的一次实战。</p>
+        <h2 id="sec-0" tabindex="-1">三个模块，难点在组合</h2>
+        <p>文档解析（PDF 转文本）、内容提炼（Prompt + 模型）、问答（RAG 检索）。每个模块单独看都不难，但把它们接起来，中间全是脏活：PDF 提取出来的文本有乱码、页眉页脚混在正文里、章节顺序偶尔错乱。</p>
+        <h2 id="sec-1" tabindex="-1">一次塞整本书，撞上了天花板</h2>
+        <p>最初我想省事：把整本书的文本一次性丢给模型「请总结要点」。一本 8 万字的技术书，光输入就远超上下文窗口，就算模型吃得下，<code>usage</code> 里的 prompt_tokens 也吓人，而且输出越来越敷衍——典型的「上下文淹没」。</p>
+        <p>改成两段式才解决：<strong>先分章节各自提炼，再把各章摘要汇总</strong>。一条 8 万字的书，拆成 20 章、每章先压成 300 字，最终汇总只喂 6000 字。成本降了一个数量级，质量反而更稳。</p>
+        <h2 id="sec-2" tabindex="-1">最有意思的发现：让模型先提问</h2>
+        <p>直接说「总结本章要点」，输出总是干巴巴的。我换了个说法——「先列出本章最值得回答的 3 个问题，再逐一回答」——结果信息密度和结构性明显提升。加一个「提问」的中间步骤，等于逼模型先理解重点再组织语言。</p>
+        <pre><code># 两段式提炼 + 先提问
+for chapter in pdf.chapters:
+    q = llm("列出本章最值得回答的 3 个问题：" + chapter)
+    summary = llm("结合原文回答这些问题：" + q + chapter)
+    chapter_summaries.append(summary)
+final = llm("把各章要点汇总成一份笔记：" + join(chapter_summaries))</code></pre>
+        <h2 id="sec-3" tabindex="-1">成本账与下一步</h2>
+        <p>完整跑一本书大概消耗 15 万 token，按当前价格不到一块钱，但调试阶段反复重跑累积起来也挺可观——所以我给每一步都加了缓存，改 Prompt 时只重跑受影响的部分。</p>
+        <p>下一步想加「跨书对比」：上传两本书，问观点异同。这需要更准的检索和引用追溯（回答要能标出来自哪一章），是个不错的进阶练习。等做出来再写下一篇。</p>
+      </div><nav class="article-nav"><a class="post-nav-item" href="agent-and-tools.html"><span>← 更新一篇</span><strong>Agent 是什么？从「工具调用」说起</strong></a></nav><div class="article-nav"><a class="back-link" href="../blog.html">← 返回全部文章</a></div><section class="related-posts"><h2> related / 相关阅读</h2><div class="related-grid"><a href="semantic-cache-cost.html"><span>2026年11月18日</span><strong>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</strong></a><a href="vision-api-screenshots.html"><span>2026年11月18日</span><strong>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</strong></a><a href="temperature-and-sampling.html"><span>2026年11月17日</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a></div></section></article><aside class="toc toc-side" id="toc-side" aria-label="文章目录"><p class="toc-title">目录 / CONTENTS</p><ul class="toc-list"><li><a href="posts/reading-assistant.html#sec-0" data-toc="sec-0">三个模块，难点在组合</a></li><li><a href="posts/reading-assistant.html#sec-1" data-toc="sec-1">一次塞整本书，撞上了天花板</a></li><li><a href="posts/reading-assistant.html#sec-2" data-toc="sec-2">最有意思的发现：让模型先提问</a></li><li><a href="posts/reading-assistant.html#sec-3" data-toc="sec-3">成本账与下一步</a></li></ul></aside></div></main>
+  <div id="site-footer"><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

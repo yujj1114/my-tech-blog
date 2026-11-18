@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <base href="../" />
+  <title>流式输出：从「等待 8 秒」到「逐字出现」 · JIE 的技术博客</title>
+  <meta name="description" content="模型生成长文本要等好几秒，用户以为卡死了。接上流式输出后体验完全不同——记录 SSE 的实现和前端渲染的三个坑。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/posts/streaming-output.html" />
+  <meta property="og:type" content="article" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="流式输出：从「等待 8 秒」到「逐字出现」 · JIE 的技术博客" />
+  <meta property="og:description" content="模型生成长文本要等好几秒，用户以为卡死了。接上流式输出后体验完全不同——记录 SSE 的实现和前端渲染的三个坑。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/posts/streaming-output.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" />
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>(function(){try{if(sessionStorage.getItem("jie-dissolve")==="1"){sessionStorage.removeItem("jie-dissolve");document.documentElement.classList.add("pre-dissolve")}}catch(e){}})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="post">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header></div>
+  <main id="main"><div class="article-shell"><article class="article"><p class="label-mono accent">// 技术分享</p><h1>流式输出：从「等待 8 秒」到「逐字出现」</h1><div class="article-meta"><time datetime="2026-11-11">2026年11月11日</time><span>·</span><span>约 7 分钟</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=API">#API</a><a class="tag" href="tags.html?tag=%E5%AE%9E%E8%B7%B5">#实践</a></div><details class="toc-inline"><summary>本文目录</summary><ul class="toc-list"><li><a href="posts/streaming-output.html#sec-0" data-toc="sec-0">服务端：把 stream 打开</a></li><li><a href="posts/streaming-output.html#sec-1" data-toc="sec-1">前端渲染的三个坑</a></li><li><a href="posts/streaming-output.html#sec-2" data-toc="sec-2">一个意外的收获</a></li></ul></details><div class="article-body">
+        <p>我做的读书笔记助手有个致命体验问题：点「生成」后要干等 6~8 秒，页面毫无反应，朋友以为程序崩了。接上流式输出（Streaming）后，文字一个字一个字往外冒，同样的等待时间，体感完全不一样。</p>
+        <h2 id="sec-0" tabindex="-1">服务端：把 stream 打开</h2>
+        <p>一行参数的事——<code>stream=True</code>。返回的不再是完整响应，而是一个生成器，逐个吐出增量片段：</p>
+        <pre><code>stream = client.chat.completions.create(
+    model="gpt-4o-mini",
+    messages=[...],
+    stream=True
+)
+for chunk in stream:
+    delta = chunk.choices[0].delta.content
+    if delta:
+        yield delta  # Web 框架里推给前端</code></pre>
+        <h2 id="sec-1" tabindex="-1">前端渲染的三个坑</h2>
+        <p>① 每个 chunk 可能是一个字、一个词，甚至半个 token，直接 <code>textContent +=</code> 会有卡顿——用 <code>requestAnimationFrame</code> 批量刷新更顺。② 中文乱码：SSE 默认按 UTF-8，但如果按字节流读取，跨 chunk 的多字节字符会被截断，得用 <code>TextDecoder</code> 的流式模式。③ 用户中途关闭页面，要主动断开连接，不然服务端还在傻傻地生成、继续烧钱。</p>
+        <h2 id="sec-2" tabindex="-1">一个意外的收获</h2>
+        <p>流式输出不只是体验优化。因为能实时看到生成过程，我第一次直观发现模型「写到一半改主意」的现象——先写了一段，又删掉重写。这在非流式下完全看不见。观察生成过程，本身也是一种调试手段。</p>
+      </div><nav class="article-nav"><a class="post-nav-item" href="prompt-engineering-notes.html"><span>← 更新一篇</span><strong>从 Prompt 到 Prompt Engineering：我踩过的几个坑</strong></a><a class="post-nav-item" href="multi-turn-context.html"><span>更旧一篇 →</span><strong>多轮对话聊久了就「失忆」，我做了个上下文管理器</strong></a></nav><div class="article-nav"><a class="back-link" href="../blog.html">← 返回全部文章</a></div><section class="related-posts"><h2> related / 相关阅读</h2><div class="related-grid"><a href="semantic-cache-cost.html"><span>2026年11月18日</span><strong>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</strong></a><a href="vision-api-screenshots.html"><span>2026年11月18日</span><strong>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</strong></a><a href="temperature-and-sampling.html"><span>2026年11月17日</span><strong>temperature 调多少？我把同一问题问了 100 遍</strong></a></div></section></article><aside class="toc toc-side" id="toc-side" aria-label="文章目录"><p class="toc-title">目录 / CONTENTS</p><ul class="toc-list"><li><a href="posts/streaming-output.html#sec-0" data-toc="sec-0">服务端：把 stream 打开</a></li><li><a href="posts/streaming-output.html#sec-1" data-toc="sec-1">前端渲染的三个坑</a></li><li><a href="posts/streaming-output.html#sec-2" data-toc="sec-2">一个意外的收获</a></li></ul></aside></div></main>
+  <div id="site-footer"><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer></div>
+  <div id="search-root"></div>
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>

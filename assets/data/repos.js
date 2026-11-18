@@ -1,0 +1,73 @@
+/* 由 build.js 自动生成，勿手改 */
+window.REPOS = [
+  {
+    "name": "ai-retouch-agent",
+    "full_name": "yujj1114/ai-retouch-agent",
+    "url": "https://github.com/yujj1114/ai-retouch-agent",
+    "desc": "AI 图片编辑器 - 自然语言驱动的图像编辑 Agent",
+    "lang": "JavaScript",
+    "langColor": "#f1e05a",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "updated": "今天更新",
+    "homepage": "",
+    "license": ""
+  },
+  {
+    "name": "hardness-converter",
+    "full_name": "yujj1114/hardness-converter",
+    "url": "https://github.com/yujj1114/hardness-converter",
+    "desc": "钢材硬度换算工具 - GB/T 33362 / ISO 18265 纯公式实现",
+    "lang": "Python",
+    "langColor": "#3572A5",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "updated": "今天更新",
+    "homepage": "",
+    "license": ""
+  },
+  {
+    "name": "pdf-toolbox",
+    "full_name": "yujj1114/pdf-toolbox",
+    "url": "https://github.com/yujj1114/pdf-toolbox",
+    "desc": "PDF 编辑工具箱 - Flask + PyInstaller 桌面应用",
+    "lang": "Python",
+    "langColor": "#3572A5",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "updated": "今天更新",
+    "homepage": "",
+    "license": ""
+  },
+  {
+    "name": "work-daily-report",
+    "full_name": "yujj1114/work-daily-report",
+    "url": "https://github.com/yujj1114/work-daily-report",
+    "desc": "工作日报系统 - Flask + SQLite + Excel 导出",
+    "lang": "HTML",
+    "langColor": "#e34c26",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "updated": "今天更新",
+    "homepage": "",
+    "license": ""
+  },
+  {
+    "name": "npi-file-manager",
+    "full_name": "yujj1114/npi-file-manager",
+    "url": "https://github.com/yujj1114/npi-file-manager",
+    "desc": "NPI 工程文件管理系统 - Flask + SQLite + three.js",
+    "lang": "HTML",
+    "langColor": "#e34c26",
+    "stars": 0,
+    "forks": 0,
+    "topics": [],
+    "updated": "今天更新",
+    "homepage": "",
+    "license": ""
+  }
+];

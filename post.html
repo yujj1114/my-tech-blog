@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>文章 · JIE 的技术博客</title>
+  <script>(function(){var t='light';try{var d=matchMedia('(prefers-color-scheme: dark)').matches;t=localStorage.getItem('theme-v2')||(d?'dark':'light')}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body>
+  <main id="main" class="container" style="padding:80px 20px;text-align:center">
+    <p class="label-mono accent">// REDIRECTING</p>
+    <h1>正在跳转文章…</h1>
+    <p class="lede">如果没有自动跳转，请<a href="blog.html">点击这里返回博客</a>。</p>
+  </main>
+  <script>
+    /* 兼容旧链接 post.html?slug=xxx → posts/xxx.html */
+    (function () {
+      var q = new URLSearchParams(location.search);
+      var slug = q.get('slug');
+      var sc = q.get('sharecode');
+      var target = slug && /^[a-z0-9-]+$/i.test(slug) ? 'posts/' + slug + '.html' : 'blog.html';
+      // 保留访问码，否则发布链接下跳转会 403
+      if (sc) { try { var u = new URL(target, location.href); u.searchParams.set('sharecode', sc); target = u.pathname.replace(/^\//, '') + u.search; } catch (e) {} }
+      location.replace(target);
+    })();
+  </script>
+</body>
+</html>

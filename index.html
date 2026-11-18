@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>JIE 的技术博客</title>
+  <meta name="description" content="记录前端、工程化与一切让我着迷的技术。" />
+  <script>(function(){var t="light";try{var d=matchMedia("(prefers-color-scheme: dark)").matches;t=localStorage.getItem("theme-v2")||(d?"dark":"light")}catch(e){}document.documentElement.dataset.theme=t})();</script>
+  <script>
+    /* 轻溶解：若从站内跳转而来，首帧即置透明，避免闪烁（app.js 就绪后淡入） */
+    (function () {
+      try {
+        if (sessionStorage.getItem('jie-dissolve') === '1') {
+          sessionStorage.removeItem('jie-dissolve');
+          document.documentElement.classList.add('pre-dissolve');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <!--BUILD:seo-->  <meta name="description" content="记录我从零学习 AI 应用的过程：Prompt、RAG、Agent、工具调用，以及每一次踩坑后的顿悟。" />
+  <link rel="canonical" href="https://yujj1114.github.io/my-tech-blog/index.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="JIE 的技术博客" />
+  <meta property="og:title" content="JIE 的技术博客" />
+  <meta property="og:description" content="记录我从零学习 AI 应用的过程：Prompt、RAG、Agent、工具调用，以及每一次踩坑后的顿悟。" />
+  <meta property="og:url" content="https://yujj1114.github.io/my-tech-blog/index.html" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="theme-color" content="#a8435f" />
+  <link rel="icon" href="favicon.svg" type="image/svg+xml" /><!--/BUILD:seo-->
+  <link rel="stylesheet" href="assets/css/style.css" />
+</head>
+<body data-page="index">
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <div id="site-header"><!--BUILD:header--><header class="site-header"><div class="container nav-inner"><a href="index.html" class="brand" aria-label="JIE 的技术博客 首页"><span class="brand-full">JIE 的技术博客</span><span class="brand-short">JIE</span></a><nav class="nav-links" aria-label="主导航"><a href="index.html" aria-current="page">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a></nav><div class="nav-actions"><button type="button" class="icon-btn search-trigger" data-search-open aria-label="搜索文章">🔍</button><button type="button" class="icon-btn theme-trigger" data-theme-toggle aria-label="切换深浅主题">◐</button><button type="button" class="icon-btn menu-trigger" data-menu-toggle aria-label="打开菜单" aria-expanded="false">☰</button></div></div><div class="mobile-menu" id="mobile-menu"><div class="container" style="padding-bottom:16px"><a href="index.html" aria-current="page">首页</a><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="#" data-search-open>搜索文章</a><a href="#" data-theme-toggle>切换深浅主题</a></div></div></header><!--/BUILD:header--></div>
+
+  <main id="main">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-mesh" aria-hidden="true"></div>
+      <canvas id="hero-canvas" aria-hidden="true"></canvas>
+      <div class="container hero-body">
+        <p class="label-mono accent" id="whoami"><!--BUILD:hero-->// AI APPLICATION LEARNER — $ whoami<!--/BUILD:hero--></p>
+        <h1>
+          <span id="hero-kicker"><!--BUILD:kicker-->你好，我是<!--/BUILD:kicker--></span>
+          <span class="line2 accent" id="hero-emphasis"><!--BUILD:emphasis-->JIE<!--/BUILD:emphasis--></span>
+        </h1>
+        <p class="lede" id="hero-lede"><!--BUILD:lede-->记录我从零学习 AI 应用的过程：Prompt、RAG、Agent、工具调用，以及每一次踩坑后的顿悟。 把学 AI 的过程，写成能复用的笔记。<!--/BUILD:lede--></p>
+        <div class="actions">
+          <a class="btn btn-primary" href="blog.html">开始阅读 →</a>
+          <a class="btn btn-ghost" href="about.html">关于我</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 单跑马灯 -->
+    <div class="marquee-band" aria-hidden="true">
+      <div class="marquee-track">
+        <span id="marquee-1"><!--BUILD:marquee1-->Learn · Build · Share · 学 AI · 做应用 · 记踩坑 · 保持好奇 · Learn · Build · Share · 学 AI · 做应用 · 记踩坑 · 保持好奇 · <!--/BUILD:marquee1--></span>
+        <span id="marquee-2"><!--BUILD:marquee2-->Learn · Build · Share · 学 AI · 做应用 · 记踩坑 · 保持好奇 · Learn · Build · Share · 学 AI · 做应用 · 记踩坑 · 保持好奇 · <!--/BUILD:marquee2--></span>
+      </div>
+    </div>
+
+    <!-- 统计 -->
+    <section class="stats">
+      <div class="container stats-grid" id="stats-grid"><!--BUILD:stats--><div data-reveal><p class="stat-label">Posts</p><p class="stat-num">14<span class="plus">+</span></p><p class="stat-sub">篇文章</p></div><div data-reveal><p class="stat-label">Tags</p><p class="stat-num">10<span class="plus">+</span></p><p class="stat-sub">个标签</p></div><div data-reveal><p class="stat-label">Since</p><p class="stat-num">2026<span class="plus"></span></p><p class="stat-sub">持续更新中</p></div><!--/BUILD:stats--></div>
+    </section>
+
+    <!-- 最新文章 -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <h2>最新文章</h2>
+          <a href="blog.html">全部文章 →</a>
+        </div>
+        <div class="post-grid" id="latest-posts"><!--BUILD:latest--><article class="post-card" data-reveal><a class="card-link" href="posts/semantic-cache-cost.html" aria-label="语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」"></a><div class="post-meta"><time datetime="2026-11-18">2026年11月18日</time><span class="post-cat">技术分享</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96">#成本优化</a><a class="tag" href="tags.html?tag=%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">#学习笔记</a><span class="reading">9 min</span></div><h3><a href="posts/semantic-cache-cost.html">语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</a></h3><p>给 AI 问答加语义缓存，延迟从 2.3 秒降到 80 毫秒、成本省了六成。但相似度阈值设错一点，两个完全不同的意图就会被当成同一个问题。</p><span class="card-underline" aria-hidden="true"></span></article><article class="post-card" data-reveal><a class="card-link" href="posts/vision-api-screenshots.html" aria-label="把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用"></a><div class="post-meta"><time datetime="2026-11-18">2026年11月18日</time><span class="post-cat">技术分享</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=%E5%A4%9A%E6%A8%A1%E6%80%81">#多模态</a><a class="tag" href="tags.html?tag=%E5%AE%9E%E8%B7%B5">#实践</a><span class="reading">10 min</span></div><h3><a href="posts/vision-api-screenshots.html">把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</a></h3><p>以为多模态就是「传张图片问一句」，结果先撞 413 请求体过大，再遇上模型把错误码 NO 读成 N0。截图理解的关键不在模型，在送进去之前怎么处理图。</p><span class="card-underline" aria-hidden="true"></span></article><article class="post-card" data-reveal><a class="card-link" href="posts/temperature-and-sampling.html" aria-label="temperature 调多少？我把同一问题问了 100 遍"></a><div class="post-meta"><time datetime="2026-11-17">2026年11月17日</time><span class="post-cat">技术分享</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=API">#API</a><a class="tag" href="tags.html?tag=%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">#学习笔记</a><span class="reading">8 min</span></div><h3><a href="posts/temperature-and-sampling.html">temperature 调多少？我把同一问题问了 100 遍</a></h3><p>「temperature=0.7 更有创意」这种说法到底靠不靠谱？我用一个分类任务跑了 100 次，统计不同参数下的输出分布，结果有点反直觉。</p><span class="card-underline" aria-hidden="true"></span></article><article class="post-card" data-reveal><a class="card-link" href="posts/why-i-learn-ai.html" aria-label="你好，AI：我为什么开始系统学习 AI 应用"></a><div class="post-meta"><time datetime="2026-11-16">2026年11月16日</time><span class="post-cat">随笔</span><a class="tag" href="tags.html?tag=AI">#AI</a><a class="tag" href="tags.html?tag=%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">#学习笔记</a><span class="reading">4 min</span></div><h3><a href="posts/why-i-learn-ai.html">你好，AI：我为什么开始系统学习 AI 应用</a></h3><p>从「会用 ChatGPT」到「能做出一个 AI 应用」，中间隔着一条叫工程化的河。记录我为什么出发，以及打算怎么走。</p><span class="card-underline" aria-hidden="true"></span></article><!--/BUILD:latest--></div>
+      </div>
+    </section>
+
+    <!-- 本周折腾 -->
+    <section class="section">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <h2>本周折腾</h2>
+        </div>
+        <div class="notes-grid" id="notes-grid"><!--BUILD:notes--><a class="note-card" href="blog.html" data-reveal><div class="note-meta"><time datetime="2026-11-16">2026/11/16</time><span class="note-label">🧪 折腾</span></div><p>把 prompt 做成模板加上版本号，终于不会因为改崩了而找不到上一版。工程习惯救了自己。</p></a><a class="note-card" href="blog.html" data-reveal><div class="note-meta"><time datetime="2026-11-15">2026/11/15</time><span class="note-label">🔧 踩坑</span></div><p>RAG 召回了一堆无关内容，加了关键词混合检索才好转。检索质量才是 RAG 的瓶颈。</p></a><a class="note-card" href="blog.html" data-reveal><div class="note-meta"><time datetime="2026-11-13">2026/11/13</time><span class="note-label">✨ 小确幸</span></div><p>读书笔记助手跑通了第一次完整问答。从 PDF 到答案，整条链路终于串起来了。</p></a><!--/BUILD:notes--></div>
+      </div>
+    </section>
+
+    <!-- 时间线 -->
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <div class="section-head" data-reveal>
+          <h2>时间线</h2>
+          <a href="archive.html">完整归档 →</a>
+        </div>
+        <div class="timeline" id="timeline"><!--BUILD:timeline--><div class="tl-year"><button class="tl-toggle" type="button" data-target="tl-y-2026" aria-expanded="true"><span class="tl-title">2026</span><span class="tl-right"><span>14 篇</span><svg class="tl-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 6 5 5 5-5"/></svg></span></button><div class="tl-panel open" id="tl-y-2026"><div><div class="tl-month-row"><button class="tl-toggle" type="button" data-target="tl-m-2026-11" aria-expanded="false"><span class="tl-month">11 月</span><span class="tl-right"><span>14 篇</span><svg class="tl-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m3 6 5 5 5-5"/></svg></span></button><div class="tl-panel" id="tl-m-2026-11"><div><ul class="tl-list"><li><a href="posts/semantic-cache-cost.html"><time datetime="2026-11-18">11.18</time><span>语义缓存踩坑记：命中率冲到 62%，我差点把「退款」答成「退货」</span></a></li><li><a href="posts/vision-api-screenshots.html"><time datetime="2026-11-18">11.18</time><span>把 NPI 的报错截图丢给视觉模型：我从 413 错误一路调到了可用</span></a></li><li><a href="posts/temperature-and-sampling.html"><time datetime="2026-11-17">11.17</time><span>temperature 调多少？我把同一问题问了 100 遍</span></a></li><li><a href="posts/why-i-learn-ai.html"><time datetime="2026-11-16">11.16</time><span>你好，AI：我为什么开始系统学习 AI 应用</span></a></li><li><a href="posts/structured-output-json.html"><time datetime="2026-11-15">11.15</time><span>让模型稳定输出 JSON，我踩了格式解析的四个坑</span></a></li><li><a href="posts/first-llm-api.html"><time datetime="2026-11-14">11.14</time><span>第一次调用大模型 API：一个 Hello World 的完整记录</span></a></li><li><a href="posts/embedding-model-choice.html"><time datetime="2026-11-13">11.13</time><span>Embedding 模型选型：我被「维度越高越好」骗了</span></a></li><li><a href="posts/prompt-engineering-notes.html"><time datetime="2026-11-11">11.11</time><span>从 Prompt 到 Prompt Engineering：我踩过的几个坑</span></a></li><li><a href="posts/streaming-output.html"><time datetime="2026-11-11">11.11</time><span>流式输出：从「等待 8 秒」到「逐字出现」</span></a></li><li><a href="posts/multi-turn-context.html"><time datetime="2026-11-09">11.9</time><span>多轮对话聊久了就「失忆」，我做了个上下文管理器</span></a></li><li><a href="posts/rag-first-try.html"><time datetime="2026-11-08">11.8</time><span>RAG 入门：给大模型接上自己的知识库</span></a></li><li><a href="posts/prompt-injection.html"><time datetime="2026-11-07">11.7</time><span>我的 AI 助手被「越狱」了：Prompt 注入入门</span></a></li><li><a href="posts/agent-and-tools.html"><time datetime="2026-11-05">11.5</time><span>Agent 是什么？从「工具调用」说起</span></a></li><li><a href="posts/reading-assistant.html"><time datetime="2026-11-02">11.2</time><span>我用 AI 做了个读书笔记助手</span></a></li></ul></div></div></div></div></div></div><!--/BUILD:timeline--></div>
+      </div>
+    </section>
+
+    <!-- 标签云 -->
+    <section class="section" style="padding-top:0">
+      <div class="container">
+        <div class="section-head" data-reveal><h2>标签云</h2></div>
+        <div class="tag-cloud" id="tag-cloud"><!--BUILD:tags--><a class="tag" href="tags.html?tag=AI">#AI <span class="count">14</span></a><a class="tag" href="tags.html?tag=%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0">#学习笔记 <span class="count">8</span></a><a class="tag" href="tags.html?tag=%E5%AE%9E%E8%B7%B5">#实践 <span class="count">6</span></a><a class="tag" href="tags.html?tag=API">#API <span class="count">3</span></a><a class="tag" href="tags.html?tag=Prompt">#Prompt <span class="count">3</span></a><a class="tag" href="tags.html?tag=RAG">#RAG <span class="count">2</span></a><a class="tag" href="tags.html?tag=Agent">#Agent <span class="count">2</span></a><a class="tag" href="tags.html?tag=%E6%88%90%E6%9C%AC%E4%BC%98%E5%8C%96">#成本优化 <span class="count">1</span></a><a class="tag" href="tags.html?tag=%E5%A4%9A%E6%A8%A1%E6%80%81">#多模态 <span class="count">1</span></a><a class="tag" href="tags.html?tag=%E5%AE%89%E5%85%A8">#安全 <span class="count">1</span></a><!--/BUILD:tags--></div>
+      </div>
+    </section>
+  </main>
+
+  <div id="site-footer"><!--BUILD:footer--><footer class="site-footer"><div class="container footer-inner"><p>© 2026 JIE · 由原生 HTML/CSS/JS 强力驱动</p><div class="footer-links"><a href="blog.html">博客</a><a href="projects.html">项目</a><a href="tags.html">标签</a><a href="archive.html">归档</a><a href="about.html">关于</a><a href="https://github.com/yujj1114" target="_blank" rel="noopener">GitHub</a><a href="feed.xml">RSS</a><button type="button" data-search-open>搜索</button></div></div></footer><!--/BUILD:footer--></div>
+  <div id="search-root"></div>
+
+  <script src="assets/data/site.js"></script>
+  <script src="assets/data/text.js"></script>
+  <script src="assets/js/components.js"></script>
+  <script>
+    (function () {
+      const S = window.SITE, C = window.Components;
+      const set = (id, text) => { const el = document.getElementById(id); if (el) el.textContent = text; };
+      set('whoami', S.whoami);
+      set('hero-kicker', S.heroKicker);
+      set('hero-emphasis', S.heroEmphasis);
+      set('hero-lede', S.description + ' ' + S.heroLine2);
+      set('marquee-1', S.marquee.repeat(2));
+      set('marquee-2', S.marquee.repeat(2));
+
+      // 统计
+      const tagSet = new Set();
+      S.posts.forEach(p => p.tags.forEach(t => tagSet.add(t)));
+      document.getElementById('stats-grid').innerHTML = [
+        { label: 'Posts', num: S.posts.length, plus: '+', sub: '篇文章' },
+        { label: 'Tags', num: tagSet.size, plus: '+', sub: '个标签' },
+        { label: 'Since', num: S.since, plus: '', sub: '持续更新中' }
+      ].map(s => `
+        <div data-reveal>
+          <p class="stat-label">${s.label}</p>
+          <p class="stat-num">${s.num}<span class="plus">${s.plus}</span></p>
+          <p class="stat-sub">${s.sub}</p>
+        </div>`).join('');
+
+      // 最新文章（按日期取最新 4 篇，不依赖 posts 数组顺序）
+      document.getElementById('latest-posts').innerHTML =
+        S.posts.slice().sort((a, b) => b.date.localeCompare(a.date)).slice(0, 4).map(C.postCard).join('');
+
+      // 本周折腾
+      document.getElementById('notes-grid').innerHTML = S.notes.map(n => `
+        <a class="note-card" href="blog.html" data-reveal>
+          <div class="note-meta">
+            <time datetime="${n.date}">${n.date.replace(/-/g, '/')}</time>
+            <span class="note-label">${n.emoji} ${n.label}</span>
+          </div>
+          <p>${n.text}</p>
+        </a>`).join('');
+
+      // 时间线：按 年 → 月 分组
+      const byYear = {};
+      S.posts.forEach(p => {
+        const [y, m] = p.date.split('-');
+        (byYear[y] = byYear[y] || {})[m] = (byYear[y][m] || []).concat(p);
+      });
+      let idx = 0;
+      document.getElementById('timeline').innerHTML = Object.keys(byYear).sort().reverse().map(y => {
+        const months = byYear[y];
+        const yearCount = Object.values(months).reduce((a, arr) => a + arr.length, 0);
+        const yid = 'tl-y-' + y;
+        const monthHtml = Object.keys(months).sort().reverse().map(m => {
+          const mid = 'tl-m-' + y + '-' + m;
+          const items = months[m].map(p => `
+            <li><a href="posts/${p.slug}.html">
+              <time datetime="${p.date}">${Number(m)}.${Number(p.date.split('-')[2])}</time>
+              <span>${p.title}</span>
+            </a></li>`).join('');
+          return `
+            <div class="tl-month-row">
+              <button class="tl-toggle" type="button" data-target="${mid}" aria-expanded="false">
+                <span class="tl-month">${Number(m)} 月</span>
+                <span class="tl-right"><span>${months[m].length} 篇</span>
+                  <svg class="tl-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 5 5 5-5"/></svg>
+                </span>
+              </button>
+              <div class="tl-panel" id="${mid}"><div><ul class="tl-list">${items}</ul></div></div>
+            </div>`;
+        }).join('');
+        const open = idx++ === 0 ? ' open' : '';
+        const expanded = open ? 'true' : 'false';
+        return `
+          <div class="tl-year">
+            <button class="tl-toggle" type="button" data-target="${yid}" aria-expanded="${expanded}">
+              <span class="tl-title">${y}</span>
+              <span class="tl-right"><span>${yearCount} 篇</span>
+                <svg class="tl-chev" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="m3 6 5 5 5-5"/></svg>
+              </span>
+            </button>
+            <div class="tl-panel${open}" id="${yid}"><div>${monthHtml}</div></div>
+          </div>`;
+      }).join('');
+
+      // 标签云（带计数）
+      const counts = {};
+      S.posts.forEach(p => p.tags.forEach(t => counts[t] = (counts[t] || 0) + 1));
+      document.getElementById('tag-cloud').innerHTML = Object.keys(counts).sort((a, b) => counts[b] - counts[a]).map(t => `
+        <a class="tag" href="tags.html?tag=${encodeURIComponent(t)}">#${t} <span class="count">${counts[t]}</span></a>`).join('');
+    })();
+  </script>
+  <script src="assets/js/app.js"></script>
+</body>
+</html>
